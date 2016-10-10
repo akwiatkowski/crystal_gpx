@@ -27,7 +27,21 @@ puts g.points.inspect
 ```
 
 
-TODO: Write usage instructions here
+### Geotagging
+
+Compile and install:
+
+```bash
+crystal build bin/geotag.cr --release -o bin/cr_geotag
+sudo mv bin/cr_geotag /usr/bin
+```
+
+And run in directory where you store JPEG and GPX files to geotag them.
+
+```bash
+cr_geotag
+```
+
 
 ## Development
 
