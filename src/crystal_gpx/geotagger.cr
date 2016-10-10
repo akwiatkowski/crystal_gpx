@@ -24,6 +24,7 @@ class CrystalGpx::Geotagger
       point = @parser.search_for_time(time: photo.time.not_nil!)
       if point
         puts "+ ... found point #{point.lat},#{point.lon} at #{point.time}, diff #{photo.time.not_nil! - point.time.not_nil!}"
+        photo.set_location(lat: point.lat, lon: point.lon, ele: point.ele, direction: 0.0)
       else
         puts "- ... not found"
       end
