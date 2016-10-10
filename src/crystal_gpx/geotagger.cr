@@ -7,11 +7,26 @@ class CrystalGpx::Geotagger
     @photos = Array(CrystalGpx::Photo).new
   end
 
+  # Search all files and load GPX and JPG/JPEGs
+  def load_path(path : String)
+    Dir.glob(File.join([path, "**", "*"])).each do |f|
+      if f =~ /\.gpx$/i
+        load_gpx(f)
+      end
+
+      if f =~ /\.jpe?g$/i
+        add_image(f)
+      end
+    end
+  end
+
   def load_gpx(path : String)
+    puts "Loading GPX #{path}"
     @parser.load(path)
   end
 
   def add_image(path : String)
+    puts "Add image #{path}"
     @photos << CrystalGpx::Photo.new(path)
   end
 
