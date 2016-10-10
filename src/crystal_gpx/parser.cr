@@ -20,7 +20,8 @@ class CrystalGpx::Parser
             b.children.each do |c|
               if c.name == "trkseg"
                 c.children.each do |d|
-                  @points << CrystalGpx::Point.from_node(d)
+                  point = CrystalGpx::Point.from_node(d)
+                  @points << point.not_nil! if point
                 end
               end
             end
@@ -31,4 +32,35 @@ class CrystalGpx::Parser
   end
 
   getter :points
+
+  def search_for_time(
+      time : Time,
+      search_range = Time::Span.new(0, 1, 0),
+      good_range = Time::Span.new(0, 0, 15),
+      interpolate = true,
+      extrapolate = true
+    )
+
+    # preselect for faster operations
+    preselected = @points.select{|p|
+      abs = (p.time - time).abs
+      # puts abs.inspect, p.time.inspect, time.inspect, "*"
+      abs <= search_range
+    }
+
+    # check if there is one good enough
+    selected = preselected.select{|p| (p.time - time).abs <= good_range}.sort{ |a,b|
+      (a.time - time).abs <=> (b.time - time).abs
+    }
+    if selected.size > 0
+      return selected[0]
+    end
+
+    # TODO
+    # add interpolation to maximize accuracy
+    # add extrapolation to find something, sometimes it is better
+    # to have very inaccurate than no data
+
+    return nil
+  end
 end
