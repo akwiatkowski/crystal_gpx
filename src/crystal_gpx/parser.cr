@@ -35,7 +35,7 @@ class CrystalGpx::Parser
 
   def search_for_time(
       time : Time,
-      search_range = Time::Span.new(0, 1, 0),
+      first_search_range = Time::Span.new(0, 1, 0),
       good_range = Time::Span.new(0, 0, 15),
       interpolate = true,
       extrapolate = true
@@ -44,8 +44,7 @@ class CrystalGpx::Parser
     # preselect for faster operations
     preselected = @points.select{|p|
       abs = (p.time - time).abs
-      # puts abs.inspect, p.time.inspect, time.inspect, "*"
-      abs <= search_range
+      abs <= first_search_range
     }
 
     # check if there is one good enough

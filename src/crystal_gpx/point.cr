@@ -26,4 +26,37 @@ struct CrystalGpx::Point
 
     return s
   end
+
+  def self.interpolate(points : Array(CrystalGpx::Point), time : Time)
+    # in case there is exact point
+    exact = points.select{|p| p.time == time}
+    return exact[0] if exact.size > 0
+
+    # empty array, nil result
+    return nil if points.size == 0
+
+    # NOTE no check correctnes of data
+
+    # get two points, one before, one after
+    before = points.select{|p| p.time < time}.sort{|a,b| (a.time - time).abs <=> (b.time - time).abs}.first
+    after = points.select{|p| p.time > time}.sort{|a,b| (a.time - time).abs <=> (b.time - time).abs}.first
+
+    # if not enough data, no before/after return nil
+    if before.nil? || after.nil?
+      return nil
+    end
+
+    point = CrystalGpx::Point.new
+    point.time = time
+    point.lat = before.lat
+    point.lat += (after.lat - before.lat) * ((time - before.time).to_f / (after.time - before.time).to_f)
+
+    point.lon = before.lon
+    point.lon += (after.lon - before.lon) * (time - before.time).to_f / (after.time - before.time).to_f
+
+    point.ele = before.ele
+    point.ele += (after.ele - before.ele) * (time - before.time).to_f / (after.time - before.time).to_f
+
+    return point
+  end
 end

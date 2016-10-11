@@ -8,5 +8,7 @@
 # Dependencies will be locked in application that uses them
 /shard.lock
 
-geotag
+# Compiled
+cr_geotag
 bin/geotag
+bin/cr_geotag
