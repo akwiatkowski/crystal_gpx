@@ -48,6 +48,10 @@ class CrystalGpx::Geotagger
   def match
     puts "#{@photos.size.to_s.colorize(:light_cyan)} photos + #{@parser.points.size.to_s.colorize(:light_yellow)} points"
 
+    @photos = @photos.sort{|a,b|
+      a.path <=> b.path
+    }
+
     @photos.each_with_index do |photo, i|
       puts "Searching TIME for photo #{photo.path.colorize(:cyan)} ..."
 
@@ -67,6 +71,11 @@ class CrystalGpx::Geotagger
         if point_result == "interpolated"
           point = point_tuple[2].not_nil!
           puts "without interpolation found point #{point.lat.to_s.colorize(:blue)},#{point.lon.to_s.colorize(:blue)} at #{point.time.colorize(:green)}, diff #{(photo.time.not_nil! - point.time.not_nil!).to_f.to_s.colorize(:light_green)} s"
+          point = point_tuple[0].not_nil!
+        end
+        if point_result == "extrapolated"
+          point = point_tuple[2].not_nil!
+          puts "closest point in extrapolation #{point.lat.to_s.colorize(:blue)},#{point.lon.to_s.colorize(:blue)} at #{point.time.colorize(:green)}, diff #{(photo.time.not_nil! - point.time.not_nil!).to_f.to_s.colorize(:light_green)} s"
           point = point_tuple[0].not_nil!
         end
         puts "DONE #{point_result.upcase.colorize(:magenta)} found point #{point.lat.to_s.colorize(:blue)},#{point.lon.to_s.colorize(:blue)} at #{point.time.colorize(:green)}, diff #{(photo.time.not_nil! - point.time.not_nil!).to_f.to_s.colorize(:light_green)} s"

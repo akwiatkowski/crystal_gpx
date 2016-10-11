@@ -55,7 +55,11 @@ class CrystalGpx::Parser
 
     if interpolate
       ip = CrystalGpx::Point.interpolate(selected, time)
-      return {ip, "interpolated", selected[0]}
+      if ip
+        if ip.not_nil!.lat != selected[0].not_nil!.lat || ip.not_nil!.lon != selected[0].not_nil!.lon
+          return {ip, "interpolated", selected[0]}
+        end
+      end
     end
 
     if selected.size > 0
@@ -68,9 +72,12 @@ class CrystalGpx::Parser
         abs = (p.time - time).abs
         abs <= extrapolate_range
       }
+      ep = preselected.sort{|a,b|
+        (a.time - time).abs <=> (b.time - time).abs
+      }.first
 
       ip = CrystalGpx::Point.interpolate(preselected, time)
-      return {ip, "extrapolated", nil}
+      return {ip, "extrapolated", ep}
     end
 
     # sorry :(

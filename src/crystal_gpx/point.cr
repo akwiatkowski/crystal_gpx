@@ -38,13 +38,14 @@ struct CrystalGpx::Point
     # NOTE no check correctnes of data
 
     # get two points, one before, one after
-    before = points.select{|p| p.time < time}.sort{|a,b| (a.time - time).abs <=> (b.time - time).abs}.first
-    after = points.select{|p| p.time > time}.sort{|a,b| (a.time - time).abs <=> (b.time - time).abs}.first
+    ba = points.select{|p| p.time < time}.sort{|a,b| (a.time - time).abs <=> (b.time - time).abs}
+    aa = points.select{|p| p.time > time}.sort{|a,b| (a.time - time).abs <=> (b.time - time).abs}
 
     # if not enough data, no before/after return nil
-    if before.nil? || after.nil?
-      return nil
-    end
+    return nil if ba.size == 0 || aa.size == 0
+
+    before = ba[0]
+    after = aa[0]
 
     point = CrystalGpx::Point.new
     point.time = time
