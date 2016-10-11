@@ -8,7 +8,7 @@ struct CrystalGpx::Point
 
   property :lat, :lon, :ele, :time
 
-  def self.from_node(n : XML::Node)
+  def self.from_node(n : XML::Node, time_type = Time::Kind::Local)
     return nil if n["lat"]?.nil? || n["lon"]?.nil?
 
     s = new
@@ -20,7 +20,7 @@ struct CrystalGpx::Point
         s.ele = c.text.to_s.to_f
       elsif c.name == "time"
         t = c.children.first.to_s
-        s.time = Time.parse(t, "%Y-%m-%dT%H:%M:%S%z", Time::Kind::Local)
+        s.time = Time.parse(t, "%Y-%m-%dT%H:%M:%S%z", time_type)
       end
     end
 

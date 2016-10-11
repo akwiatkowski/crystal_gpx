@@ -18,9 +18,14 @@ class CrystalGpx::Geotagger
     # have position we will use avg value from very big range
     @extrapolate = false
     @extrapolate_range = Time::Span.new(36, 0, 0)
+
+    @time_type = Time::Kind::Local
   end
 
   property :extrapolate
+
+  def add_timezone!
+  end
 
   # Search all files and load GPX and JPG/JPEGs
   def load_path(path : String)
@@ -37,7 +42,7 @@ class CrystalGpx::Geotagger
 
   def load_gpx(path : String)
     puts "Loading GPX #{path.colorize(:yellow)}"
-    @parser.load(path)
+    @parser.load(path: path, time_type: @time_type)
   end
 
   def add_image(path : String)
@@ -53,7 +58,7 @@ class CrystalGpx::Geotagger
     }
 
     @photos.each_with_index do |photo, i|
-      puts "Searching TIME for photo #{photo.path.colorize(:cyan)} ..."
+      puts "Searching TIME for photo #{(i + 1).to_s.colorize(:light_magenta)}/#{@photos.size.to_s.colorize(:light_magenta)} #{photo.path.colorize(:cyan)} ..."
 
       point_tuple = @parser.search_for_time(
         time: photo.time.not_nil!,
@@ -68,7 +73,7 @@ class CrystalGpx::Geotagger
         point = point_tuple[0].not_nil!
         point_result = point_tuple[1].not_nil!
 
-        if point_result == "interpolated"
+        if point_result == "interpolated_with_selected"
           point = point_tuple[2].not_nil!
           puts "without interpolation found point #{point.lat.to_s.colorize(:blue)},#{point.lon.to_s.colorize(:blue)} at #{point.time.colorize(:green)}, diff #{(photo.time.not_nil! - point.time.not_nil!).to_f.to_s.colorize(:light_green)} s"
           point = point_tuple[0].not_nil!
@@ -89,7 +94,8 @@ class CrystalGpx::Geotagger
   end
 
   def save
-    @photos.each do |photo|
+    @photos.each_with_index do |photo, i|
+      puts "Saving #{(i + 1).to_s.colorize(:light_magenta)}/#{@photos.size.to_s.colorize(:light_magenta)}"
       photo.save_location
     end
   end

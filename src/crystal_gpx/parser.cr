@@ -7,7 +7,7 @@ class CrystalGpx::Parser
     @points = Array(CrystalGpx::Point).new
   end
 
-  def load(path : String)
+  def load(path : String, time_type = Time::Kind::Local)
     n = XML.parse(File.open(path))
     # fuck it, xpath is somehow not working
     # and I don't know why
@@ -20,7 +20,7 @@ class CrystalGpx::Parser
             b.children.each do |c|
               if c.name == "trkseg"
                 c.children.each do |d|
-                  point = CrystalGpx::Point.from_node(d)
+                  point = CrystalGpx::Point.from_node(n: d, time_type: time_type)
                   @points << point.not_nil! if point
                 end
               end
@@ -55,9 +55,19 @@ class CrystalGpx::Parser
 
     if interpolate
       ip = CrystalGpx::Point.interpolate(selected, time)
+      if selected.size > 0
+        sp = selected[0]
+      else
+        sp = nil
+      end
+
       if ip
-        if ip.not_nil!.lat != selected[0].not_nil!.lat || ip.not_nil!.lon != selected[0].not_nil!.lon
-          return {ip, "interpolated", selected[0]}
+        if sp
+          if ip.not_nil!.lat != sp.not_nil!.lat || ip.not_nil!.lon != sp.not_nil!.lon
+            return {ip, "interpolated_with_selected", sp}
+          end
+        else
+          return {ip, "interpolated", nil}
         end
       end
     end
@@ -66,19 +76,25 @@ class CrystalGpx::Parser
       return {selected[0], "selected", selected[0]}
     end
 
+
     # the last resort
     if extrapolate
       preselected = @points.select{|p|
         abs = (p.time - time).abs
         abs <= extrapolate_range
       }
-      ep = preselected.sort{|a,b|
-        (a.time - time).abs <=> (b.time - time).abs
-      }.first
 
-      ip = CrystalGpx::Point.interpolate(preselected, time)
-      return {ip, "extrapolated", ep}
+      if preselected.size > 0
+        eps = preselected.sort{|a,b|
+          (a.time - time).abs <=> (b.time - time).abs
+        }
+        ep = eps[0]
+
+        ip = CrystalGpx::Point.interpolate(preselected, time)
+        return {ip, "extrapolated", ep}
+      end
     end
+
 
     # sorry :(
     return {nil, "not_found", nil}
