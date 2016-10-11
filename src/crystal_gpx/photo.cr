@@ -3,6 +3,10 @@ struct CrystalGpx::Photo
   @@timestamp_key = "Image timestamp"
 
   @time : (Time | Nil)
+  @lat : (Float64 | Nil)
+  @lon : (Float64 | Nil)
+  @ele : (Float64 | Nil)
+  @direction : (Float64 | Nil)
 
   getter :path, :time
 
@@ -50,7 +54,22 @@ struct CrystalGpx::Photo
   end
 
   def set_location(lat : Float64, lon : Float64, ele : Float64, direction = 0.0)
+    @lat = lat
+    @lon = lon
+    @ele = ele
+
+    # puts @lat, @lon, @ele
+  end
+
+  def save_location
+    return if @lat.nil? || @lon.nil?  || @ele.nil?
+
     # http://www.exiv2.org/tags.html
+
+    lat = @lat.not_nil!
+    lon = @lon.not_nil!
+    ele = @ele.not_nil!
+    #direction = @direction.not_nil! # not implemented
 
     update_exif(@path, "Exif.GPSInfo.GPSVersionID", "2 2 0 0")
 

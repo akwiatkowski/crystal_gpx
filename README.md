@@ -32,7 +32,7 @@ puts g.points.inspect
 Compile and install:
 
 ```bash
-crystal build bin/geotag.cr --release -o bin/cr_geotag
+crystal build bin/cr_geotag.cr --release -o bin/cr_geotag
 sudo mv bin/cr_geotag /usr/bin
 ```
 
