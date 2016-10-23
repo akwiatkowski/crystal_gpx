@@ -20,7 +20,7 @@ OptionParser.parse! do |parser|
   #parser.on("-gl", "--gps-local", "GPS store time in local timezone") { p.gps_local! }
 
   # parser.on("-t NAME", "--to=NAME", "Specifies the name to salute") { |name| destination = name }
-  parser.on("-h", "--help", "Show this help") { puts parser }
+  parser.on("-h", "--help", "Show this help") { puts parser; exit }
 end
 
 p.load_path(".")
