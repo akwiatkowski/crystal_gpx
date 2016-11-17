@@ -20,9 +20,12 @@ class CrystalGpx::Geotagger
     @extrapolate_range = Time::Span.new(36, 0, 0)
 
     @time_type = Time::Kind::Local
+
+    @hour_span = Time::Span.new(1, 0, 0)
+    @camera_offset = 0 # in hours
   end
 
-  property :extrapolate
+  property :extrapolate, :camera_offset
 
   def add_timezone!
   end
@@ -59,9 +62,12 @@ class CrystalGpx::Geotagger
 
     @photos.each_with_index do |photo, i|
       puts "Searching TIME for photo #{(i + 1).to_s.colorize(:light_magenta)}/#{@photos.size.to_s.colorize(:light_magenta)} #{photo.path.colorize(:cyan)} ..."
-
+      if @camera_offset != 0
+        puts "Searching with offset #{@hour_span} hour"
+      end
+      
       point_tuple = @parser.search_for_time(
-        time: photo.time.not_nil!,
+        time: photo.time.not_nil! + (@hour_span * @camera_offset),
         first_search_range: @first_search_range,
         good_range: @good_range,
         interpolate: @interpolate,

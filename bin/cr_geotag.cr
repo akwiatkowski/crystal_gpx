@@ -12,6 +12,8 @@ OptionParser.parse! do |parser|
   parser.on("-d", "--dry", "Perform dry run") { dry = true }
   parser.on("-e", "--extrapolate", "Use extrapolated (not real, but close enough) positions") { p.extrapolate = true }
 
+  parser.on("-c HOURS", "--camera-time HOURS", "Add HOURS to camera time. Use -1 if photo time is 1 hour higher than localtime.") { |hours| puts hours.inspect; p.camera_offset = hours.to_i }
+
   # GPS units should use timezone, but I'm not sure 100%
   # if every software is doing it ok
   # Even if not, this options are not usable now
