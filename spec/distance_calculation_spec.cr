@@ -10,7 +10,7 @@ describe CrystalGpx::Point do
     o.lon.should eq lon
   end
 
-  it "calculate distance Poznan-Watsaw without using Point struct" do
+  it "calculate distance Poznan-Warsaw without using Point struct" do
     poznan_lat = 52.40285
     poznan_lon = 16.91062
 
@@ -40,7 +40,7 @@ describe CrystalGpx::Point do
     d.should be < 278.90
   end
 
-  it "calculate distance Poznan-Watsaw without using Point struct" do
+  it "calculate distance Poznan-Warsaw with using two Point struct" do
     poznan_lat = 52.40285
     poznan_lon = 16.91062
 
@@ -58,6 +58,22 @@ describe CrystalGpx::Point do
 
     # instance method
     d = poznan.distance_to(warsaw)
+
+    d.should be > 278.70
+    d.should be < 278.90
+  end
+
+  it "calculate distance Poznan-Warsaw with using one Point struct" do
+    poznan_lat = 52.40285
+    poznan_lon = 16.91062
+
+    warsaw_lat = 52.23044
+    warsaw_lon = 21.00458
+
+    poznan = CrystalGpx::Point.new(lat: poznan_lat, lon: poznan_lon)
+
+    # instance method
+    d = poznan.distance_to(other_lat: warsaw_lat, other_lon: warsaw_lon)
 
     d.should be > 278.70
     d.should be < 278.90

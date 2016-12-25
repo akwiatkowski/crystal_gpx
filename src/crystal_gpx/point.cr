@@ -94,8 +94,8 @@ struct CrystalGpx::Point
     return self.class.distance(
       lat1: self.lat,
       lon1: self.lon,
-      lat2: other.lat,
-      lon2: other.lon
+      lat2: other_lat,
+      lon2: other_lon
     )
   end
 end
