@@ -9,8 +9,8 @@ describe CrystalGpx::Parser do
     p = CrystalGpx::Geotagger.new
     p.load_path(path)
 
-    #p.load_gpx(gpx_path)
-    #p.add_image(photo_path)
-    #p.match
+    # p.load_gpx(gpx_path)
+    # p.add_image(photo_path)
+    # p.match
   end
 end

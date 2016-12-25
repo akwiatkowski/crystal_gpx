@@ -6,5 +6,4 @@ module CrystalGpx
     p.load(path)
     return p
   end
-
 end

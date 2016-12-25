@@ -61,8 +61,5 @@ describe CrystalGpx::Point do
 
     d.should be > 278.70
     d.should be < 278.90
-
   end
-
-
 end

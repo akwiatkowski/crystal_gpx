@@ -62,14 +62,14 @@ struct CrystalGpx::Photo
   end
 
   def save_location
-    return if @lat.nil? || @lon.nil?  || @ele.nil?
+    return if @lat.nil? || @lon.nil? || @ele.nil?
 
     # http://www.exiv2.org/tags.html
 
     lat = @lat.not_nil!
     lon = @lon.not_nil!
     ele = @ele.not_nil!
-    #direction = @direction.not_nil! # not implemented
+    # direction = @direction.not_nil! # not implemented
 
     update_exif(@path, "Exif.GPSInfo.GPSVersionID", "2 2 0 0")
 
@@ -79,8 +79,8 @@ struct CrystalGpx::Photo
     lon_ref = (lon < 0.0) ? "W" : "E"
     update_exif(@path, "Exif.GPSInfo.GPSLongitudeRef", lon_ref)
 
-    update_exif(@path, "Exif.GPSInfo.GPSLatitude", convert_degree_to_exiv_string(lat) )
-    update_exif(@path, "Exif.GPSInfo.GPSLongitude", convert_degree_to_exiv_string(lon) )
+    update_exif(@path, "Exif.GPSInfo.GPSLatitude", convert_degree_to_exiv_string(lat))
+    update_exif(@path, "Exif.GPSInfo.GPSLongitude", convert_degree_to_exiv_string(lon))
     update_exif(@path, "Exif.GPSInfo.GPSAltitude", "#{ele.to_i}/1")
     # update_exif(@path, "Exif.GPSInfo.GPSImgDirectionRef", "True direction")
     # update_exif(@path, "Exif.GPSInfo.GPSImgDirection", "0/1") # direction

@@ -56,7 +56,7 @@ class CrystalGpx::Geotagger
   def match
     puts "#{@photos.size.to_s.colorize(:light_cyan)} photos + #{@parser.points.size.to_s.colorize(:light_yellow)} points"
 
-    @photos = @photos.sort{|a,b|
+    @photos = @photos.sort { |a, b|
       a.path <=> b.path
     }
 
@@ -65,7 +65,6 @@ class CrystalGpx::Geotagger
       if @camera_offset != 0
         puts "Searching with offset #{@hour_span} hour"
       end
-      
       point_tuple = @parser.search_for_time(
         time: photo.time.not_nil! + (@hour_span * @camera_offset),
         first_search_range: @first_search_range,
@@ -73,7 +72,7 @@ class CrystalGpx::Geotagger
         interpolate: @interpolate,
         extrapolate: @extrapolate,
         extrapolate_range: @extrapolate_range
-        )
+      )
 
       if point_tuple[0]
         point = point_tuple[0].not_nil!

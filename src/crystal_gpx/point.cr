@@ -34,7 +34,7 @@ struct CrystalGpx::Point
 
   def self.interpolate(points : Array(CrystalGpx::Point), time : Time)
     # in case there is exact point
-    exact = points.select{|p| p.time == time}
+    exact = points.select { |p| p.time == time }
     return exact[0] if exact.size > 0
 
     # empty array, nil result
@@ -43,8 +43,8 @@ struct CrystalGpx::Point
     # NOTE no check correctnes of data
 
     # get two points, one before, one after
-    ba = points.select{|p| p.time < time}.sort{|a,b| (a.time - time).abs <=> (b.time - time).abs}
-    aa = points.select{|p| p.time > time}.sort{|a,b| (a.time - time).abs <=> (b.time - time).abs}
+    ba = points.select { |p| p.time < time }.sort { |a, b| (a.time - time).abs <=> (b.time - time).abs }
+    aa = points.select { |p| p.time > time }.sort { |a, b| (a.time - time).abs <=> (b.time - time).abs }
 
     # if not enough data, no before/after return nil
     return nil if ba.size == 0 || aa.size == 0
@@ -71,8 +71,8 @@ struct CrystalGpx::Point
     dlong = (lon2 - lon1) * D2R
     dlat = (lat2 - lat1) * D2R
     a = (Math.sin(dlat / 2.0) ** 2.0) + Math.cos(lat1 * D2R) * Math.cos(lat2 * D2R) * (Math.sin(dlong / 2.0) ** 2.0)
-    c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt( 1.0 - a))
-    d = 6367.0 * c;
+    c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1.0 - a))
+    d = 6367.0 * c
 
     return d
   end
@@ -88,5 +88,14 @@ struct CrystalGpx::Point
 
   def distance_to(other_point : CrystalGpx::Point)
     return self.class.distance(point1: self, point2: other_point)
+  end
+
+  def distance_to(other_lat : Float64, other_lon : Float64)
+    return self.class.distance(
+      lat1: self.lat,
+      lon1: self.lon,
+      lat2: other.lat,
+      lon2: other.lon
+    )
   end
 end

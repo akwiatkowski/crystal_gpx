@@ -18,8 +18,8 @@ OptionParser.parse! do |parser|
   # if every software is doing it ok
   # Even if not, this options are not usable now
   # Localtime is default
-  #parser.on("-gu", "--gps-utc", "GPS store time in UTC") { p.gps_utc! }
-  #parser.on("-gl", "--gps-local", "GPS store time in local timezone") { p.gps_local! }
+  # parser.on("-gu", "--gps-utc", "GPS store time in UTC") { p.gps_utc! }
+  # parser.on("-gl", "--gps-local", "GPS store time in local timezone") { p.gps_local! }
 
   # parser.on("-t NAME", "--to=NAME", "Specifies the name to salute") { |name| destination = name }
   parser.on("-h", "--help", "Show this help") { puts parser; exit }

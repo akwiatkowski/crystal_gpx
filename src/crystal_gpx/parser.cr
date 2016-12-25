@@ -34,22 +34,20 @@ class CrystalGpx::Parser
   getter :points
 
   def search_for_time(
-      time : Time,
-      first_search_range = Time::Span.new(0, 1, 0),
-      good_range = Time::Span.new(0, 0, 15),
-      interpolate = true,
-      extrapolate = false,
-      extrapolate_range = Time::Span.new(36, 0, 0)
-    )
-
+                      time : Time,
+                      first_search_range = Time::Span.new(0, 1, 0),
+                      good_range = Time::Span.new(0, 0, 15),
+                      interpolate = true,
+                      extrapolate = false,
+                      extrapolate_range = Time::Span.new(36, 0, 0))
     # preselect for faster operations
-    preselected = @points.select{|p|
+    preselected = @points.select { |p|
       abs = (p.time - time).abs
       abs <= first_search_range
     }
 
     # check if there is one good enough
-    selected = preselected.select{|p| (p.time - time).abs <= good_range}.sort{ |a,b|
+    selected = preselected.select { |p| (p.time - time).abs <= good_range }.sort { |a, b|
       (a.time - time).abs <=> (b.time - time).abs
     }
 
@@ -76,16 +74,15 @@ class CrystalGpx::Parser
       return {selected[0], "selected", selected[0]}
     end
 
-
     # the last resort
     if extrapolate
-      preselected = @points.select{|p|
+      preselected = @points.select { |p|
         abs = (p.time - time).abs
         abs <= extrapolate_range
       }
 
       if preselected.size > 0
-        eps = preselected.sort{|a,b|
+        eps = preselected.sort { |a, b|
           (a.time - time).abs <=> (b.time - time).abs
         }
         ep = eps[0]
@@ -94,7 +91,6 @@ class CrystalGpx::Parser
         return {ip, "extrapolated", ep}
       end
     end
-
 
     # sorry :(
     return {nil, "not_found", nil}
