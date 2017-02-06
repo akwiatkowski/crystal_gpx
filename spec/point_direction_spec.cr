@@ -57,7 +57,7 @@ describe CrystalGpx::Point do
     direction.should eq 270.0
   end
 
-  it "calculate direction Poznan and something to the west" do
+  it "short human direction" do
     poznan_lat = 52.40285
     poznan_lon = 16.91062
     poznan = CrystalGpx::Point.new(lat: poznan_lat, lon: poznan_lon)
