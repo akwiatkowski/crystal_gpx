@@ -1,6 +1,6 @@
 require "./spec_helper"
 
-describe CrystalGpx::Parser do
+describe CrystalGpx::Geotagger do
   it "load GPX file" do
     path = File.join(["spec", "fixtures"])
     gpx_path = File.join([path, "geotag.gpx"])

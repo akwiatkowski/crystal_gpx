@@ -10,6 +10,9 @@ struct CrystalGpx::Point
 
   property :lat, :lon, :ele, :time
 
+  def initialize
+  end
+
   def initialize(@lat : Float64, @lon : Float64)
   end
 
@@ -92,6 +95,39 @@ struct CrystalGpx::Point
 
   def distance_to(other_lat : Float64, other_lon : Float64)
     return self.class.distance(
+      lat1: self.lat,
+      lon1: self.lon,
+      lat2: other_lat,
+      lon2: other_lon
+    )
+  end
+
+  # return direction in degrees
+  # south = -90
+  # north = 90
+  def self.direction(lat1, lon1, lat2, lon2)
+    # http://stackoverflow.com/questions/9566069/how-to-calculate-angle-between-two-geographical-gps-coordinates
+    dy = lat2 - lat1
+    dx = Math.cos(D2R * lat1) * (lon2 - lon1)
+    angle = Math.atan2(dy, dx)
+    return angle / D2R
+  end
+
+  def self.direction(point1 : CrystalGpx::Point, point2 : CrystalGpx::Point)
+    return direction(
+      lat1: point1.lat,
+      lon1: point1.lon,
+      lat2: point2.lat,
+      lon2: point2.lon
+    )
+  end
+
+  def direction_to(other_point : CrystalGpx::Point)
+    return self.class.direction(point1: self, point2: other_point)
+  end
+
+  def direction_to(other_lat : Float64, other_lon : Float64)
+    return self.class.direction(
       lat1: self.lat,
       lon1: self.lon,
       lat2: other_lat,

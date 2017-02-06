@@ -1,6 +1,6 @@
 require "./spec_helper"
 
-describe CrystalGpx::Parser do
+describe CrystalGpx::Point do
   it "interpolate points" do
     point_a = CrystalGpx::Point.new
     point_a.lat = 10.0
