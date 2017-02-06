@@ -103,14 +103,26 @@ struct CrystalGpx::Point
   end
 
   # return direction in degrees
-  # south = -90
-  # north = 90
+  #
+  # before normalize
+  # south = -90 -> 180
+  # north = 90 -> 0
+  # east = 0 -> 90
+  # west = 180 -> 270
+  #
+  # after normalize
+  # south = 180
+  # north = 0
+  # east = 90
+  # west = 270
   def self.direction(lat1, lon1, lat2, lon2)
     # http://stackoverflow.com/questions/9566069/how-to-calculate-angle-between-two-geographical-gps-coordinates
     dy = lat2 - lat1
     dx = Math.cos(D2R * lat1) * (lon2 - lon1)
     angle = Math.atan2(dy, dx)
-    return angle / D2R
+    d = angle / D2R
+    # normalize
+    return (360 + 90 - d) % 360
   end
 
   def self.direction(point1 : CrystalGpx::Point, point2 : CrystalGpx::Point)
@@ -133,5 +145,24 @@ struct CrystalGpx::Point
       lat2: other_lat,
       lon2: other_lon
     )
+  end
+
+  def self.direction_to_human(d : Float64) : String
+    h = 45.0 / 2.0
+    dp = (d / h).floor.to_i
+
+    return case dp
+    when      0 then "N"
+    when 1, 2   then "NE"
+    when 3, 4   then "E"
+    when 5, 6   then "SE"
+    when 7, 8   then "S"
+    when 9, 10  then "SW"
+    when 11, 12 then "W"
+    when 13, 14 then "NW"
+    when     15 then "N"
+    else
+      raise "direction is wrong"
+    end
   end
 end
