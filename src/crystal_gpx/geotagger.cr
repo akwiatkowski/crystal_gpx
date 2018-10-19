@@ -53,8 +53,8 @@ class CrystalGpx::Geotagger
         YAML.parse(file)
       end
 
-      @camera_offset = yaml["time_offset"]?.to_s.to_i
-      if @camera_offset != 0
+      if yaml["time_offset"]?
+        @camera_offset = yaml["time_offset"]?.to_s.to_i
         puts "Camera time offset #{@camera_offset.to_s.colorize(:yellow)} hours"
       end
 
