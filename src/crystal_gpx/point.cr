@@ -16,7 +16,7 @@ struct CrystalGpx::Point
   def initialize(@lat : Float64, @lon : Float64)
   end
 
-  def self.from_node(n : XML::Node, time_type = Time::Kind::Local)
+  def self.from_node(n : XML::Node)
     return nil if n["lat"]?.nil? || n["lon"]?.nil?
 
     s = new
@@ -28,7 +28,7 @@ struct CrystalGpx::Point
         s.ele = c.text.to_s.to_f
       elsif c.name == "time"
         t = c.children.first.to_s
-        s.time = Time.parse(t, "%Y-%m-%dT%H:%M:%S%z", time_type)
+        s.time = Time.parse(t, "%Y-%m-%dT%H:%M:%S%z")
       end
     end
 

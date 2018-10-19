@@ -7,7 +7,7 @@ class CrystalGpx::Parser
     @points = Array(CrystalGpx::Point).new
   end
 
-  def load(path : String, time_type = Time::Kind::Local)
+  def load(path : String)
     n = XML.parse(File.open(path))
     # fuck it, xpath is somehow not working
     # and I don't know why
@@ -20,7 +20,7 @@ class CrystalGpx::Parser
             b.children.each do |c|
               if c.name == "trkseg"
                 c.children.each do |d|
-                  point = CrystalGpx::Point.from_node(n: d, time_type: time_type)
+                  point = CrystalGpx::Point.from_node(n: d)
                   @points << point.not_nil! if point
                 end
               end

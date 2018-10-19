@@ -19,8 +19,6 @@ class CrystalGpx::Geotagger
     @extrapolate = false
     @extrapolate_range = Time::Span.new(36, 0, 0)
 
-    @time_type = Time::Kind::Local
-
     @hour_span = Time::Span.new(1, 0, 0)
     @camera_offset = 0 # in hours
   end
@@ -45,7 +43,7 @@ class CrystalGpx::Geotagger
 
   def load_gpx(path : String)
     puts "Loading GPX #{path.colorize(:yellow)}"
-    @parser.load(path: path, time_type: @time_type)
+    @parser.load(path: path)
   end
 
   def add_image(path : String)

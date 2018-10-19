@@ -28,7 +28,11 @@ struct CrystalGpx::Photo
 
     if @exif[@@timestamp_key]?
       # "2016:10:10 07:04:33"
-      @time = Time.parse(@exif[@@timestamp_key], "%Y:%m:%d %H:%M:%S", Time::Kind::Local)
+      @time = Time.parse(
+        time: @exif[@@timestamp_key],
+        pattern: "%Y:%m:%d %H:%M:%S",
+        location: Time::Location.load_local # XXX
+      )
     end
   end
 
