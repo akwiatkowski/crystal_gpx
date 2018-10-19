@@ -1,9 +1,14 @@
 require "colorize"
+require "yaml"
 
 require "./parser"
 require "./photo"
 
 class CrystalGpx::Geotagger
+  CONFIG_FILENAME = ".geotag.yml"
+
+  getter :camera_offset
+
   def initialize
     @parser = CrystalGpx::Parser.new
     @photos = Array(CrystalGpx::Photo).new
@@ -21,15 +26,17 @@ class CrystalGpx::Geotagger
 
     @hour_span = Time::Span.new(1, 0, 0)
     @camera_offset = 0 # in hours
+
+    @config_path = CONFIG_FILENAME
   end
 
   property :extrapolate, :camera_offset
 
-  def add_timezone!
-  end
-
   # Search all files and load GPX and JPG/JPEGs
   def load_path(path : String)
+    @config_path = File.join(path, CONFIG_FILENAME)
+    load_config
+
     Dir.glob(File.join([path, "**", "*"])).each do |f|
       if f =~ /\.gpx$/i
         load_gpx(f)
@@ -37,6 +44,20 @@ class CrystalGpx::Geotagger
 
       if f =~ /\.jpe?g$/i
         add_image(f)
+      end
+    end
+  end
+
+  def load_config
+    if File.exists?(@config_path)
+      puts "Loading config file #{@config_path.to_s.colorize(:yellow)}"
+      yaml = File.open(@config_path) do |file|
+        YAML.parse(file)
+      end
+
+      @camera_offset = yaml["time_offset"].to_s.to_i
+      if @camera_offset != 0
+        puts "Camera time offset #{@camera_offset.to_s.colorize(:yellow)} hours"
       end
     end
   end
@@ -59,7 +80,11 @@ class CrystalGpx::Geotagger
     }
 
     @photos.each_with_index do |photo, i|
-      puts "Searching TIME for photo #{(i + 1).to_s.colorize(:light_magenta)}/#{@photos.size.to_s.colorize(:light_magenta)} #{photo.path.colorize(:cyan)} ..."
+      puts "Searching TIME for photo #{(i + 1).to_s.colorize(:light_magenta)}/#{@photos.size.to_s.colorize(:light_magenta)} #{photo.path.colorize(:cyan)} at #{photo.time.inspect}"
+      if photo.time.nil?
+        puts "ERROR Photo has nil time #{photo.path.to_s}".colorize(:red)
+        next
+      end
       if @camera_offset != 0
         puts "Searching with offset #{@hour_span} hour"
       end
