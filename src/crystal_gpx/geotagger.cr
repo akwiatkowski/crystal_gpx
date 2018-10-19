@@ -7,8 +7,6 @@ require "./photo"
 class CrystalGpx::Geotagger
   CONFIG_FILENAME = ".geotag.yml"
 
-  getter :camera_offset
-
   def initialize
     @parser = CrystalGpx::Parser.new
     @photos = Array(CrystalGpx::Photo).new
@@ -55,9 +53,18 @@ class CrystalGpx::Geotagger
         YAML.parse(file)
       end
 
-      @camera_offset = yaml["time_offset"].to_s.to_i
+      @camera_offset = yaml["time_offset"]?.to_s.to_i
       if @camera_offset != 0
         puts "Camera time offset #{@camera_offset.to_s.colorize(:yellow)} hours"
+      end
+
+      extrapolate = yaml["extrapolate"]?.to_s
+      if extrapolate == "true"
+        @extrapolate = true
+        puts "Extrapolate changed to #{@extrapolate.to_s.colorize(:yellow)}"
+      elsif extrapolate == "false"
+        @extrapolate = false
+        puts "Extrapolate changed to #{@extrapolate.to_s.colorize(:yellow)}"
       end
     end
   end

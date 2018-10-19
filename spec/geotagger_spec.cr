@@ -21,6 +21,7 @@ describe CrystalGpx::Geotagger do
     p.load_path(path)
 
     p.camera_offset.should eq 5
+    p.extrapolate.should eq true
   end
 
 end
