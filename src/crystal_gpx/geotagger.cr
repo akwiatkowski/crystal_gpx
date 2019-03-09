@@ -46,6 +46,21 @@ class CrystalGpx::Geotagger
     end
   end
 
+  def save_config
+    unless File.exists?(@config_path)
+      puts "Saving config file #{@config_path.to_s.colorize(:yellow)}"
+      File.open(@config_path, "w") do |file|
+        YAML.dump(
+          {
+            "time_offset" => 0,
+            "extrapolate" => true,
+          },
+          file
+        )
+      end
+    end
+  end
+
   def load_config
     if File.exists?(@config_path)
       puts "Loading config file #{@config_path.to_s.colorize(:yellow)}"

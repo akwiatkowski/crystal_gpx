@@ -23,5 +23,4 @@ describe CrystalGpx::Geotagger do
     p.camera_offset.should eq 5
     p.extrapolate.should eq true
   end
-
 end

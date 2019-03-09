@@ -28,7 +28,11 @@ struct CrystalGpx::Point
         s.ele = c.text.to_s.to_f
       elsif c.name == "time"
         t = c.children.first.to_s
-        s.time = Time.parse(t, "%Y-%m-%dT%H:%M:%S%z")
+        s.time = Time.parse(
+          time: t,
+          pattern: "%Y-%m-%dT%H:%M:%S%z",
+          location: Time::Location::UTC
+        )
       end
     end
 
@@ -152,7 +156,7 @@ struct CrystalGpx::Point
     dp = (d / h).floor.to_i
 
     return case dp
-    when      0 then "N"
+    when 0      then "N"
     when 1, 2   then "NE"
     when 3, 4   then "E"
     when 5, 6   then "SE"
@@ -160,7 +164,7 @@ struct CrystalGpx::Point
     when 9, 10  then "SW"
     when 11, 12 then "W"
     when 13, 14 then "NW"
-    when     15 then "N"
+    when 15     then "N"
     else
       raise "direction is wrong"
     end
