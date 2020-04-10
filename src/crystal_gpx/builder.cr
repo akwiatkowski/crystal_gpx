@@ -56,4 +56,12 @@ class CrystalGpx::Builder
       s << GPX_CLOSE
     end
   end
+
+  def to_simple_json
+    @segments.map do |array|
+      array.map do |point|
+        [point.lat, point.lon]
+      end
+    end
+  end
 end
