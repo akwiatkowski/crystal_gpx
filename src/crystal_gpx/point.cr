@@ -6,7 +6,7 @@ struct CrystalGpx::Point
   @lat : Float64 = 0.0
   @lon : Float64 = 0.0
   @ele : Float64 = 0.0
-  @time : Time = Time.now
+  @time : Time = Time.utc
 
   property :lat, :lon, :ele, :time
 
