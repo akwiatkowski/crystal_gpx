@@ -1,8 +1,8 @@
 require "logger"
 
 class CrystalGpx::Rectifier
-  DEFAULT_MIN_BEARING_CHANGE = 15.0 # degrees
-  DEFAULT_MIN_DIST_FOR_BEARING = 0.2 # km
+  DEFAULT_MIN_BEARING_CHANGE = 10.0 # degrees
+  DEFAULT_MIN_DIST_FOR_BEARING = 0.1 # km
   DEFAULT_MAX_DISTANCE = 2.0 # km
 
   def initialize(
@@ -13,6 +13,10 @@ class CrystalGpx::Rectifier
     @logger = Logger.new(STDOUT)
   )
     @new_array = Array(CrystalGpx::Point).new
+
+    @logger.info("#{self.class}: @min_bearing_change #{@min_bearing_change}")
+    @logger.info("#{self.class}: @min_distance_for_bearing #{@min_distance_for_bearing}")
+    @logger.info("#{self.class}: @max_distance #{@max_distance}")
   end
 
   def make_it_so
@@ -36,11 +40,12 @@ class CrystalGpx::Rectifier
       bearing_changed = bearing_abs_change > @min_bearing_change
       distance_higher_than_min = current_distance > @min_distance_for_bearing
       distance_higher_than_max = current_distance > @max_distance
-      is_last_point = (i == (@array.size - 1))
 
-      should_be_added = is_last_point || (bearing_changed && distance_higher_than_min) || distance_higher_than_max
+      should_be_added = (bearing_changed && distance_higher_than_min) || distance_higher_than_max
 
       if should_be_added
+        @logger.info("#{self.class}: adding, bearing_abs_change #{bearing_abs_change}, current_distance #{current_distance}")
+
         @new_array << last_point
 
         # and use current one as last
@@ -49,8 +54,11 @@ class CrystalGpx::Rectifier
       end
     end
 
+    # add always the last one
+    @new_array << @array.last
+
     @logger.info("#{self.class}: output size #{@new_array.size}")
-    return @new_array
+    return @new_array.uniq
   end
 
   def self.process(
@@ -59,10 +67,13 @@ class CrystalGpx::Rectifier
     max_distance : Float64,
     files : String,
     out_name : String,
+    logger : Logger = Logger.new(STDOUT)
   )
     segments = Array(Array(CrystalGpx::Point)).new
 
     Dir[files].each do |f|
+      logger.info("#{self}: Processing file #{f}")
+
       cg = CrystalGpx.load(f)
       points = cg.points
 
@@ -78,12 +89,18 @@ class CrystalGpx::Rectifier
 
     builder = CrystalGpx::Builder.new(segments)
 
-    File.open("#{out_name}.gpx", "w") do |f|
+    filename = "#{out_name}.gpx"
+    logger.info("#{self}: saving gpx #{filename}")
+    File.open(filename, "w") do |f|
       f << builder.to_gpx
     end
 
-    File.open("#{out_name}.json", "w") do |f|
+    filename = "#{out_name}.json"
+    logger.info("#{self}: saving gpx #{filename}")
+    File.open(filename, "w") do |f|
       f << builder.to_simple_json
     end
+
+    logger.info("#{self}: done")
   end
 end
