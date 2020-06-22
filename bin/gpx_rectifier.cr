@@ -22,30 +22,46 @@ OptionParser.parse do |parser|
     max_distance = 5.0
   end
   parser.on("-2", "--rather-important", "Rather important") do
-    min_bearing_change = 15.0
+    min_bearing_change = 14.0
     min_distance_for_bearing = 0.20
     max_distance = 2.0
   end
   parser.on("-3", "--regular", "Regular (not default)") do
-    min_bearing_change = 10.0
+    min_bearing_change = 12.0
     min_distance_for_bearing = 0.10
     max_distance = 1.0
   end
   parser.on("-4", "--detailed", "Detailed") do
-    min_bearing_change = 8.0
+    min_bearing_change = 9.0
     min_distance_for_bearing = 0.08
     max_distance = 1.0
   end
   parser.on("-5", "--fine", "Detailed (fine)") do
+    min_bearing_change = 8.0
+    min_distance_for_bearing = 0.06
+    max_distance = 1.0
+  end
+  parser.on("-6", "--super-fine", "Detailed 6.0 degree") do
     min_bearing_change = 6.0
+    min_distance_for_bearing = 0.05
+    max_distance = 0.5
+  end
+  parser.on("-7", "--super-fine", "Detailed 5.0 degree") do
+    min_bearing_change = 5.0
+    min_distance_for_bearing = 0.03
+    max_distance = 1.0
+  end
+  parser.on("-8", "--super-fine", "Detailed 4.0 degree") do
+    min_bearing_change = 4.0
     min_distance_for_bearing = 0.05
     max_distance = 1.0
   end
-  parser.on("-6", "--super-fine", "Detailed (super fine)") do
+  parser.on("-9", "--ultra-fine", "Detailed 3.0 dregree") do
     min_bearing_change = 3.0
     min_distance_for_bearing = 0.03
     max_distance = 0.5
   end
+
   parser.on("-h", "--help", "Show this help") { puts parser; exit }
 end
 
