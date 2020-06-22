@@ -7,7 +7,9 @@ require "./photo"
 class CrystalGpx::Geotagger
   CONFIG_FILENAME = ".geotag.yml"
 
-  def initialize
+  def initialize(
+    @default_point : CrystalGpx::Point? = nil
+  )
     @parser = CrystalGpx::Parser.new
     @photos = Array(CrystalGpx::Photo).new
 
@@ -95,6 +97,10 @@ class CrystalGpx::Geotagger
   end
 
   def match
+    if @default_point
+      point = @default_point.not_nil!
+      puts "default point #{point.lat},#{point.lon}"
+    end
     puts "#{@photos.size.to_s.colorize(:light_cyan)} photos + #{@parser.points.size.to_s.colorize(:light_yellow)} points"
 
     @photos = @photos.sort { |a, b|
@@ -137,6 +143,13 @@ class CrystalGpx::Geotagger
 
         photo.set_location(lat: point.lat, lon: point.lon, ele: point.ele, direction: 0.0)
         @photos[i] = photo # memory magic
+      elsif @default_point
+        # save default coords
+        point = @default_point.not_nil!
+        puts "DEFAULT #{point.lat.to_s.colorize(:blue)},#{point.lon.to_s.colorize(:blue)}"
+
+        photo.set_location(lat: point.lat, lon: point.lon, ele: 0, direction: 0.0)
+        @photos[i] = photo
       else
         puts "NOT FOUND".colorize(:red)
       end
