@@ -56,6 +56,8 @@ class CrystalGpx::Geotagger
           {
             "time_offset" => 0,
             "extrapolate" => true,
+            "default_lat" => nil,
+            "default_lon" => nil,
           },
           file
         )
@@ -73,6 +75,17 @@ class CrystalGpx::Geotagger
       if yaml["time_offset"]?
         @camera_offset = yaml["time_offset"]?.to_s.to_i
         puts "Camera time offset #{@camera_offset.to_s.colorize(:yellow)} hours"
+      end
+
+      if yaml["default_lat"]?.to_s != "" && yaml["default_lon"]?.to_s != ""
+        default_lat = yaml["default_lat"].to_s.to_f
+        default_lon = yaml["default_lon"].to_s.to_f
+        puts "Default coord #{default_lat.to_s.colorize(:yellow)},#{default_lon.to_s.colorize(:yellow)}"
+
+        @default_point = CrystalGpx::Point.new(
+          lat: default_lat.not_nil!,
+          lon: default_lon.not_nil!
+        )
       end
 
       extrapolate = yaml["extrapolate"]?.to_s
