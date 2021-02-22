@@ -8,8 +8,6 @@ max_distance = CrystalGpx::Rectifier::DEFAULT_MAX_DISTANCE
 input_files = ""
 out_name = "rectified_output"
 
-logger = Logger.new(STDOUT)
-
 OptionParser.parse do |parser|
   parser.banner = "Usage: gpx_rectifier [arguments]"
   parser.on("-f FILES", "--input=FILES", "Input files") { |f| input_files = f.to_s }
@@ -70,6 +68,5 @@ CrystalGpx::Rectifier.process(
   min_distance_for_bearing: min_distance_for_bearing,
   max_distance: max_distance,
   files: input_files,
-  out_name: out_name,
-  logger: logger,
+  out_name: out_name
 )

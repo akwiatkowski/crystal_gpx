@@ -14,17 +14,17 @@ class CrystalGpx::Geotagger
     @photos = Array(CrystalGpx::Photo).new
 
     # first positions is search within this range
-    @first_search_range = Time::Span.new(0, 1, 0)
+    @first_search_range = Time::Span.new(minutes: 1, seconds: 0)
     # accept the best place within "good range"
-    @good_range = Time::Span.new(0, 0, 15)
+    @good_range = Time::Span.new(seconds: 15)
     # interpolate to quess more accurate position
     @interpolate = true
     # in case everything fails, GPS unit has frozen and we don't
     # have position we will use avg value from very big range
     @extrapolate = false
-    @extrapolate_range = Time::Span.new(36, 0, 0)
+    @extrapolate_range = Time::Span.new(hours: 36)
 
-    @hour_span = Time::Span.new(1, 0, 0)
+    @hour_span = Time::Span.new(hours: 1)
     @camera_offset = 0 # in hours
 
     @config_path = CONFIG_FILENAME

@@ -1,11 +1,14 @@
-require "logger"
+require "log"
 
 class CrystalGpx::Rectifier
-  DEFAULT_MIN_BEARING_CHANGE = 12.0 # degrees
+  Log = ::Log.for(self)
+
+  DEFAULT_MIN_BEARING_CHANGE   = 12.0 # degrees
   DEFAULT_MIN_DIST_FOR_BEARING = 0.10 # km
-  DEFAULT_MAX_DISTANCE = 2.0 # km
+  DEFAULT_MAX_DISTANCE         =  2.0 # km
   # max distance can be as high as X percent of total distance
   DEFAULT_MAX_DISTANCE_PERCENT = 4.0
+
   # TODO add similar to min distance
 
   def initialize(
@@ -13,20 +16,19 @@ class CrystalGpx::Rectifier
     @min_bearing_change = DEFAULT_MIN_BEARING_CHANGE,
     @min_distance_for_bearing = DEFAULT_MIN_DIST_FOR_BEARING,
     @max_distance = DEFAULT_MAX_DISTANCE,
-    @max_distance_percent = DEFAULT_MAX_DISTANCE_PERCENT,
-    @logger = Logger.new(STDOUT)
+    @max_distance_percent = DEFAULT_MAX_DISTANCE_PERCENT
   )
     @new_array = Array(CrystalGpx::Point).new
 
-    @logger.info("#{self.class}: @min_bearing_change #{@min_bearing_change}")
-    @logger.info("#{self.class}: @min_distance_for_bearing #{@min_distance_for_bearing}")
-    @logger.info("#{self.class}: @max_distance #{@max_distance}")
-    @logger.info("#{self.class}: @max_distance_percent #{@max_distance_percent}")
+    Log.info { "#{self.class}: @min_bearing_change #{@min_bearing_change}" }
+    Log.info { "#{self.class}: @min_distance_for_bearing #{@min_distance_for_bearing}" }
+    Log.info { "#{self.class}: @max_distance #{@max_distance}" }
+    Log.info { "#{self.class}: @max_distance_percent #{@max_distance_percent}" }
   end
 
   def make_it_so
     @new_array.clear
-    @logger.info("#{self.class}: input size #{@array.size}")
+    Log.info { "#{self.class}: input size #{@array.size}" }
 
     return nil if @array.size < 2
 
@@ -36,14 +38,14 @@ class CrystalGpx::Rectifier
     # sum distance
     total_distance = 0.0
     (1...@array.size).each do |i|
-      total_distance += @array[i-1].distance_to(@array[i])
+      total_distance += @array[i - 1].distance_to(@array[i])
     end
 
     percent_converted_distance = total_distance * @max_distance_percent.to_f / 100.0
-    @logger.info("#{self.class}: percent_converted_distance #{percent_converted_distance}")
+    Log.info { "#{self.class}: percent_converted_distance #{percent_converted_distance}" }
 
     overall_max_distance = [@max_distance, percent_converted_distance].max
-    @logger.info("#{self.class}: overall_max_distance #{overall_max_distance}")
+    Log.info { "#{self.class}: overall_max_distance #{overall_max_distance}" }
 
     (1...@array.size).each do |i|
       # check if when we ommit point it won't change bearing
@@ -63,7 +65,7 @@ class CrystalGpx::Rectifier
       should_be_added = (bearing_changed && distance_higher_than_min) || distance_higher_than_max
 
       if should_be_added
-        @logger.debug("#{self.class}: adding, bearing_abs_change #{bearing_abs_change}, current_distance #{current_distance}")
+        Log.debug { "#{self.class}: adding, bearing_abs_change #{bearing_abs_change}, current_distance #{current_distance}" }
 
         @new_array << last_point
 
@@ -76,7 +78,7 @@ class CrystalGpx::Rectifier
     # add always the last one
     @new_array << @array.last
 
-    @logger.info("#{self.class}: output size #{@new_array.size}")
+    Log.info { "#{self.class}: output size #{@new_array.size}" }
     return @new_array.uniq
   end
 
@@ -85,13 +87,12 @@ class CrystalGpx::Rectifier
     min_distance_for_bearing : Float64,
     max_distance : Float64,
     files : String,
-    out_name : String,
-    logger : Logger = Logger.new(STDOUT)
+    out_name : String
   )
     segments = Array(Array(CrystalGpx::Point)).new
 
     Dir[files].each do |f|
-      logger.info("#{self}: Processing file #{f}")
+      Log.info { "#{self}: Processing file #{f}" }
 
       cg = CrystalGpx.load(f)
       points = cg.points
@@ -110,17 +111,17 @@ class CrystalGpx::Rectifier
     builder = CrystalGpx::Builder.new(segments)
 
     filename = "#{out_name}.gpx"
-    logger.info("#{self}: saving GPX #{filename}")
+    Log.info { "#{self}: saving GPX #{filename}" }
     File.open(filename, "w") do |f|
       f << builder.to_gpx
     end
 
     filename = "#{out_name}.json"
-    logger.info("#{self}: saving JSON #{filename}")
+    Log.info { "#{self}: saving JSON #{filename}" }
     File.open(filename, "w") do |f|
       f << builder.to_simple_json
     end
 
-    logger.info("#{self}: done")
+    Log.info { "#{self}: done" }
   end
 end

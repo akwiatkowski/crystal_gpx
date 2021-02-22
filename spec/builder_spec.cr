@@ -4,7 +4,7 @@ describe CrystalGpx::Rectifier do
   it "loads 2 gpx and merge into one" do
     names = [
       "2019-08-07_072513.gpx",
-      "2019-08-08_172540.gpx"
+      "2019-08-08_172540.gpx",
     ]
     out_path = "tmp.gpx"
 

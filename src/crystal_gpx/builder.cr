@@ -9,10 +9,10 @@ class CrystalGpx::Builder
   XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>"
   GPX_HEADER = "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\" >"
 
-  TRK_OPEN = "<trk>"
+  TRK_OPEN  = "<trk>"
   TRK_CLOSE = "</trk>"
 
-  SEGMENT_OPEN = "<trkseg>"
+  SEGMENT_OPEN  = "<trkseg>"
   SEGMENT_CLOSE = "</trkseg>"
 
   GPX_CLOSE = "</gpx>"
@@ -31,7 +31,7 @@ class CrystalGpx::Builder
         # TODO add later
         if point.time
           # <time>2019-08-07T03:32:04Z</time>
-          #s << "<time>point.time.to_s</time>"
+          # s << "<time>point.time.to_s</time>"
         end
 
         s << "</trkpt>"
