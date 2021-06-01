@@ -7,6 +7,12 @@ require "./photo"
 class CrystalGpx::Geotagger
   CONFIG_FILENAME = ".geotag.yml"
 
+  MATCH_INTERPOLATED_WITH_SELECTED = :interpolated_with_selected
+  MATCH_INTERPOLATED               = :interpolated
+  MATCH_SELECTED                   = :selected
+  MATCH_NOT_FOUND                  = :not_found
+  MATCH_EXTRAPOLATED               = :extrapolated
+
   def initialize(
     @default_point : CrystalGpx::Point? = nil
   )
@@ -142,17 +148,17 @@ class CrystalGpx::Geotagger
         point = point_tuple[0].not_nil!
         point_result = point_tuple[1].not_nil!
 
-        if point_result == "interpolated_with_selected"
+        if point_result == MATCH_INTERPOLATED_WITH_SELECTED
           point = point_tuple[2].not_nil!
           puts "without interpolation found point #{point.lat.to_s.colorize(:blue)},#{point.lon.to_s.colorize(:blue)} at #{point.time.colorize(:green)}, diff #{(photo.time.not_nil! - point.time.not_nil!).to_f.to_s.colorize(:light_green)} s"
           point = point_tuple[0].not_nil!
         end
-        if point_result == "extrapolated"
+        if point_result == MATCH_EXTRAPOLATED
           point = point_tuple[2].not_nil!
           puts "closest point in extrapolation #{point.lat.to_s.colorize(:blue)},#{point.lon.to_s.colorize(:blue)} at #{point.time.colorize(:green)}, diff #{(photo.time.not_nil! - point.time.not_nil!).to_f.to_s.colorize(:light_green)} s"
           point = point_tuple[0].not_nil!
         end
-        puts "DONE #{point_result.upcase.colorize(:magenta)} found point #{point.lat.to_s.colorize(:blue)},#{point.lon.to_s.colorize(:blue)} at #{point.time.colorize(:green)}, diff #{(photo.time.not_nil! - point.time.not_nil!).to_f.to_s.colorize(:light_green)} s"
+        puts "DONE #{point_result.to_s.upcase.colorize(:magenta)} found point #{point.lat.to_s.colorize(:blue)},#{point.lon.to_s.colorize(:blue)} at #{point.time.colorize(:green)}, diff #{(photo.time.not_nil! - point.time.not_nil!).to_f.to_s.colorize(:light_green)} s"
 
         photo.set_location(lat: point.lat, lon: point.lon, ele: point.ele, direction: 0.0)
         @photos[i] = photo # memory magic

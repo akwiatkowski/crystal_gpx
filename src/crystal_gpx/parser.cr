@@ -63,16 +63,16 @@ class CrystalGpx::Parser
       if ip
         if sp
           if ip.not_nil!.lat != sp.not_nil!.lat || ip.not_nil!.lon != sp.not_nil!.lon
-            return {ip, "interpolated_with_selected", sp}
+            return {ip, CrystalGpx::Geotagger::MATCH_INTERPOLATED_WITH_SELECTED, sp}
           end
         else
-          return {ip, "interpolated", nil}
+          return {ip, CrystalGpx::Geotagger::MATCH_INTERPOLATED, nil}
         end
       end
     end
 
     if selected.size > 0
-      return {selected[0], "selected", selected[0]}
+      return {selected[0], CrystalGpx::Geotagger::MATCH_SELECTED, selected[0]}
     end
 
     # the last resort
@@ -89,11 +89,12 @@ class CrystalGpx::Parser
         ep = eps[0]
 
         ip = CrystalGpx::Point.interpolate(preselected, time)
-        return {ip, "extrapolated", ep}
+
+        return {ep, CrystalGpx::Geotagger::MATCH_EXTRAPOLATED, ep}
       end
     end
 
     # sorry :(
-    return {nil, "not_found", nil}
+    return {nil, CrystalGpx::Geotagger::MATCH_NOT_FOUND, nil}
   end
 end
