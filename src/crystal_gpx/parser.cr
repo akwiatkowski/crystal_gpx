@@ -20,8 +20,12 @@ class CrystalGpx::Parser
             b.children.each do |c|
               if c.name == "trkseg"
                 c.children.each do |d|
-                  point = CrystalGpx::Point.from_node(n: d)
-                  @points << point.not_nil! if point
+                  begin
+                    point = CrystalGpx::Point.from_node(n: d)
+                    @points << point.not_nil! if point
+                  rescue e : Time::Format::Error
+                    puts "error in '#{path}' -> #{e.inspect}"
+                  end
                 end
               end
             end
