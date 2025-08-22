@@ -9,7 +9,7 @@ class CrystalGpx::Parser
 
   def load(path : String)
     n = XML.parse(File.open(path))
-    # fuck it, xpath is somehow not working
+    # f*** it, xpath is somehow not working
     # and I don't know why
     n.children.each do |a|
       if a.name == "gpx"
@@ -43,7 +43,7 @@ class CrystalGpx::Parser
     good_range = Time::Span.new(0, 0, 15),
     interpolate = true,
     extrapolate = false,
-    extrapolate_range = Time::Span.new(36, 0, 0)
+    extrapolate_range = Time::Span.new(36, 0, 0),
   )
     # preselect for faster operations
     preselected = @points.select { |p|

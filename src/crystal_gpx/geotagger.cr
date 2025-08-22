@@ -14,7 +14,7 @@ class CrystalGpx::Geotagger
   MATCH_EXTRAPOLATED               = :extrapolated
 
   def initialize(
-    @default_point : CrystalGpx::Point? = nil
+    @default_point : CrystalGpx::Point? = nil,
   )
     @parser = CrystalGpx::Parser.new
     @photos = Array(CrystalGpx::Photo).new

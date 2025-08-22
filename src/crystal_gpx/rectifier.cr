@@ -1,5 +1,7 @@
 require "log"
 
+require "./private_mode"
+
 class CrystalGpx::Rectifier
   Log = ::Log.for(self)
 
@@ -11,12 +13,21 @@ class CrystalGpx::Rectifier
 
   # TODO add similar to min distance
 
+  # privacy mode
+  DEFAULT_PRIVATE_MODE  = false
+  DEFAULT_PRIVATE_RANGE = 1000 # meters
+
   def initialize(
     @array : Array(CrystalGpx::Point),
     @min_bearing_change = DEFAULT_MIN_BEARING_CHANGE,
     @min_distance_for_bearing = DEFAULT_MIN_DIST_FOR_BEARING,
     @max_distance = DEFAULT_MAX_DISTANCE,
-    @max_distance_percent = DEFAULT_MAX_DISTANCE_PERCENT
+    @max_distance_percent = DEFAULT_MAX_DISTANCE_PERCENT,
+
+    @private_mode = DEFAULT_PRIVATE_MODE,
+    @private_range = DEFAULT_PRIVATE_RANGE,
+    @private_lat = 0.0,
+    @private_lon = 0.0,
   )
     @new_array = Array(CrystalGpx::Point).new
 
@@ -24,6 +35,13 @@ class CrystalGpx::Rectifier
     Log.info { "#{self.class}: @min_distance_for_bearing #{@min_distance_for_bearing}" }
     Log.info { "#{self.class}: @max_distance #{@max_distance}" }
     Log.info { "#{self.class}: @max_distance_percent #{@max_distance_percent}" }
+
+    @private_spot = CrystalGpx::Point.new(lat: @private_lat, lon: @private_lon)
+
+    if @private_mode
+      Log.info { "#{self.class}: @private_range #{@private_range}" }
+      Log.info { "#{self.class}: private geo coord #{@private_lat},#{private_lon}" }
+    end
   end
 
   def make_it_so
@@ -78,6 +96,16 @@ class CrystalGpx::Rectifier
     # add always the last one
     @new_array << @array.last
 
+    if @private_mode
+      privater_service = CrystalGpx::PrivateMode.new(
+        array: @new_array,
+        range: @private_range,
+        spot: @private_spot
+      )
+
+      @new_array = privater_service.make_it_so
+    end
+
     Log.info { "#{self.class}: output size #{@new_array.size}" }
     return @new_array.uniq
   end
@@ -87,7 +115,12 @@ class CrystalGpx::Rectifier
     min_distance_for_bearing : Float64,
     max_distance : Float64,
     files : String,
-    out_name : String
+    out_name : String,
+
+    private_mode : Bool,
+    private_range : Int32,
+    private_lat : Float64,
+    private_lon : Float64,
   )
     segments = Array(Array(CrystalGpx::Point)).new
 
@@ -101,7 +134,12 @@ class CrystalGpx::Rectifier
         min_bearing_change: min_bearing_change,
         min_distance_for_bearing: min_distance_for_bearing,
         max_distance: max_distance,
-        array: cg.points
+        array: cg.points,
+
+        private_mode: private_mode,
+        private_range: private_range,
+        private_lat: private_lat,
+        private_lon: private_lon,
       )
 
       result = instance.make_it_so

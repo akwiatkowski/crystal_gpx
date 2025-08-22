@@ -8,12 +8,29 @@ max_distance = CrystalGpx::Rectifier::DEFAULT_MAX_DISTANCE
 input_files = ""
 out_name = "rectified_output"
 
+private_mode = false
+private_lat = 0.0
+private_lon = 0.0
+private_range = 2000
+
 OptionParser.parse do |parser|
   parser.banner = "Usage: gpx_rectifier [arguments]"
   parser.on("-f FILES", "--input=FILES", "Input files") { |f| input_files = f.to_s }
   parser.on("-o OUTPUT", "--output=OUTPUT", "Output files name") { |o| out_name = o.to_s }
   parser.on("-b DEGREES", "--bearing=DEGREES", "Min bearing change") { |b| min_bearing_change = b.to_f }
   parser.on("-d DISTANCE", "--distance=DISTANCE", "Max distance") { |d| max_distance = d.to_f }
+  parser.on("", "--lat=LAT", "Set private mode lat") do |lat|
+    private_mode = true
+    private_lat = lat.to_f
+  end
+  parser.on("", "--lon=LON", "Set private mode lon") do |lon|
+    private_mode = true
+    private_lon = lon.to_f
+  end
+  parser.on("", "--private-range=RANGE", "Set private mode range in meters, default #{private_range}") do |range|
+    private_range = range.to_i
+  end
+
   parser.on("-1", "--only-important", "Only most important") do
     min_bearing_change = 20.0
     min_distance_for_bearing = 0.3
@@ -68,5 +85,10 @@ CrystalGpx::Rectifier.process(
   min_distance_for_bearing: min_distance_for_bearing,
   max_distance: max_distance,
   files: input_files,
-  out_name: out_name
+  out_name: out_name,
+
+  private_mode: private_mode,
+  private_range: private_range,
+  private_lat: private_lat,
+  private_lon: private_lon,
 )
