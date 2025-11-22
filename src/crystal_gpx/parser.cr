@@ -16,7 +16,7 @@ class CrystalGpx::Parser
         a.children.each do |b|
           if b.name == "metadata"
             # nothing
-          elsif b.name == "trk"
+          elsif b.name == "trk" # track
             b.children.each do |c|
               if c.name == "trkseg"
                 c.children.each do |d|
@@ -26,6 +26,17 @@ class CrystalGpx::Parser
                   rescue e : Time::Format::Error
                     puts "error in '#{path}' -> #{e.inspect}"
                   end
+                end
+              end
+            end
+          elsif b.name == "rte" # route
+            b.children.each do |c|
+              if c.name == "rtept"
+                begin
+                  point = CrystalGpx::Point.from_node(n: c)
+                  @points << point.not_nil! if point
+                rescue e : Time::Format::Error
+                  puts "error in '#{path}' -> #{e.inspect}"
                 end
               end
             end
